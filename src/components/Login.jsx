@@ -1,38 +1,41 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
 import Navbar from "./Navbar";
 
-export default function LoginPage() {
-  return (
-    <>
-      <Navbar />
-      <div
-        className="h-screen bg-cover bg-center flex items-center justify-center"
-        style={{ backgroundImage: "url('https://source.unsplash.com/1600x900/?login,security')" }}
-      >
-        <div className="bg-white p-8 rounded-2xl shadow-lg w-96 text-center">
-          <h2 className="text-3xl font-bold text-gray-800 mb-6">User Login</h2>
-          <input
-            type="text"
-            placeholder="Email or Username"
-            className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full p-3 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
-          />
-          <button className="w-full bg-pink-600 text-white py-3 rounded-lg font-bold hover:bg-pink-700 transition">
-            Login
-          </button>
-          <p className="text-sm text-gray-600 mt-4">
-             Don't have an account? <a href="/signup" className="text-pink-500 font-bold">Sign up</a>
-          </p>
+function LoginPage() {
+    const [formData, setFormData] = useState({
+        email: "",
+        password: ""
+    });
 
-          <p className="text-sm text-gray-600 mt-4">
-             Login as <a href="/admin-login" className="text-pink-500 font-bold">Admin?</a>
-          </p>
-        </div>
-      </div>
-    </>
-  );
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const res = await axios.post("http://localhost:5000/api/auth/login", formData);
+            alert("Login successful!");
+            localStorage.setItem("token", res.data.token);
+        } catch (err) {
+            alert(err.response.data.msg);
+        }
+    };
+
+    return (
+        <>
+            <Navbar />
+            <div className="h-screen flex items-center justify-center">
+                <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md w-96 text-center">
+                    <h2 className="text-2xl font-bold mb-4">User Login</h2>
+                    <input type="email" name="email" placeholder="Email" onChange={handleChange} className="w-full p-2 mb-2 border rounded" required />
+                    <input type="password" name="password" placeholder="Password" onChange={handleChange} className="w-full p-2 mb-4 border rounded" required />
+                    <button type="submit" className="w-full bg-green-500 text-white p-2 rounded">Login</button>
+                </form>
+            </div>
+        </>
+    );
 }
+
+export default LoginPage;

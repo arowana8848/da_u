@@ -1,46 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
 import Navbar from "./Navbar";
 
 function Signup() {
-  return (
-    <>
-      <Navbar />
-      <div
-        className="h-screen bg-cover bg-center flex items-center justify-center"
-        style={{ backgroundImage: "url('https://source.unsplash.com/1600x900/?signup,register')" }}
-      >
-        <div className="bg-white p-8 rounded-2xl shadow-lg w-96 text-center">
-          <h2 className="text-3xl font-bold text-gray-800 mb-6">Create an Account</h2>
-          <input
-            type="text"
-            placeholder="Full Name"
-            className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          />
-          <input
-            type="email"
-            placeholder="Email Address"
-            className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          />
-          <input
-            type="password"
-            placeholder="Confirm Password"
-            className="w-full p-3 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          />
-          <button className="w-full bg-yellow-500 text-white py-3 rounded-lg font-bold hover:bg-yellow-600 transition">
-            Sign Up
-          </button>
-          <p className="text-sm text-gray-600 mt-4">
-            Already have an account?<a href="/login" className="text-yellow-500 font-bold">Login</a>
-          </p>
-        </div>
-      </div>
-    </>
-  );
+    const [formData, setFormData] = useState({
+        fullName: "",
+        email: "",
+        password: ""
+    });
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const res = await axios.post("http://localhost:5000/api/auth/signup", formData);
+            alert(res.data.msg);
+        } catch (err) {
+            alert(err.response.data.msg);
+        }
+    };
+
+    return (
+        <>
+            <Navbar />
+            <div className="h-screen flex items-center justify-center">
+                <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md w-96 text-center">
+                    <h2 className="text-2xl font-bold mb-4">Create an Account</h2>
+                    <input type="text" name="fullName" placeholder="Full Name" onChange={handleChange} className="w-full p-2 mb-2 border rounded" required />
+                    <input type="email" name="email" placeholder="Email Address" onChange={handleChange} className="w-full p-2 mb-2 border rounded" required />
+                    <input type="password" name="password" placeholder="Password" onChange={handleChange} className="w-full p-2 mb-4 border rounded" required />
+                    <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">Sign Up</button>
+                </form>
+            </div>
+        </>
+    );
 }
 
 export default Signup;
